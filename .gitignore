@@ -1,0 +1,9 @@
+node_modules/
+dist/
+*.db
+.pkgsafe/
+*.log
+.env
+coverage/
+.DS_Store
+docs/
