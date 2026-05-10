@@ -1,0 +1,15 @@
+src/
+tests/
+node_modules/
+.github/
+*.test.ts
+tsconfig.json
+tsup.config.ts
+vitest.config.ts
+coverage/
+.pkgsafe/
+*.db
+*.log
+.env
+.DS_Store
+pkgsafe-opus-prompt.md

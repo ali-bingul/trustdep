@@ -1,0 +1,57 @@
+{
+  "name": "pkgsafe",
+  "version": "1.0.0",
+  "description": "npm supply chain security scanner — detect typosquatting, maintainer changes, and malicious scripts before npm install",
+  "type": "module",
+  "main": "./dist/cli.js",
+  "bin": {
+    "pkgsafe": "./dist/cli.js"
+  },
+  "files": [
+    "dist",
+    "data",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint": "tsc --noEmit",
+    "update-top": "node scripts/update-top-packages.mjs",
+    "prepublishOnly": "npm run build && npm test"
+  },
+  "keywords": [
+    "npm",
+    "security",
+    "supply-chain",
+    "typosquatting",
+    "malware",
+    "cli",
+    "devtools",
+    "audit"
+  ],
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "better-sqlite3": "^11.5.0",
+    "chalk": "^5.3.0",
+    "cli-table3": "^0.6.3",
+    "commander": "^12.0.0",
+    "got": "^14.2.1",
+    "ora": "^8.0.1",
+    "p-limit": "^6.1.0",
+    "semver": "^7.6.0"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.0",
+    "@types/node": "^20.0.0",
+    "@types/semver": "^7.5.0",
+    "tsup": "^8.0.0",
+    "typescript": "^5.4.0",
+    "vitest": "^2.0.0"
+  }
+}
