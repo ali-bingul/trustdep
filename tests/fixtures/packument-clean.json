@@ -1,0 +1,35 @@
+{
+  "name": "clean-pkg",
+  "dist-tags": { "latest": "1.0.1" },
+  "maintainers": [{ "name": "alice", "email": "alice@example.com" }],
+  "time": {
+    "created": "2024-01-01T00:00:00Z",
+    "modified": "2024-06-01T00:00:00Z",
+    "1.0.0": "2024-01-01T00:00:00Z",
+    "1.0.1": "2024-06-01T00:00:00Z"
+  },
+  "versions": {
+    "1.0.0": {
+      "name": "clean-pkg",
+      "version": "1.0.0",
+      "scripts": {},
+      "_npmUser": { "name": "alice", "email": "alice@example.com" },
+      "dist": {
+        "shasum": "aaa111",
+        "tarball": "https://registry.npmjs.org/clean-pkg/-/clean-pkg-1.0.0.tgz",
+        "attestations": { "provenance": { "predicateType": "https://slsa.dev/provenance/v0.2" } }
+      }
+    },
+    "1.0.1": {
+      "name": "clean-pkg",
+      "version": "1.0.1",
+      "scripts": {},
+      "_npmUser": { "name": "alice", "email": "alice@example.com" },
+      "dist": {
+        "shasum": "bbb222",
+        "tarball": "https://registry.npmjs.org/clean-pkg/-/clean-pkg-1.0.1.tgz",
+        "attestations": { "provenance": { "predicateType": "https://slsa.dev/provenance/v0.2" } }
+      }
+    }
+  }
+}
