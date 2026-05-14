@@ -1,0 +1,39 @@
+{
+  "name": "fake-axios",
+  "dist-tags": { "latest": "1.14.1" },
+  "maintainers": [{ "name": "attacker", "email": "attacker@evil.com" }],
+  "time": {
+    "created": "2024-01-01T00:00:00Z",
+    "modified": "2026-03-31T13:16:00Z",
+    "1.14.0": "2026-01-01T00:00:00Z",
+    "1.14.1": "2026-03-31T13:16:00Z"
+  },
+  "versions": {
+    "1.14.0": {
+      "name": "fake-axios",
+      "version": "1.14.0",
+      "scripts": {},
+      "_npmUser": { "name": "matt-wy", "email": "matt@axios.org" },
+      "dist": {
+        "shasum": "abc123",
+        "tarball": "https://registry.npmjs.org/fake-axios/-/fake-axios-1.14.0.tgz",
+        "attestations": { "provenance": { "predicateType": "https://slsa.dev/provenance/v0.2" } }
+      }
+    },
+    "1.14.1": {
+      "name": "fake-axios",
+      "version": "1.14.1",
+      "scripts": {
+        "postinstall": "node ./setup_bun.js"
+      },
+      "dependencies": {
+        "plain-crypto-js": "^4.2.1"
+      },
+      "_npmUser": { "name": "attacker", "email": "attacker@evil.com" },
+      "dist": {
+        "shasum": "def456",
+        "tarball": "https://registry.npmjs.org/fake-axios/-/fake-axios-1.14.1.tgz"
+      }
+    }
+  }
+}

