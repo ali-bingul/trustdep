@@ -2,7 +2,7 @@
 import got from "got";
 
 const BASE = "https://api.npmjs.org/downloads";
-const USER_AGENT = "pkgsafe/1.0.0";
+const USER_AGENT = "trustdep/1.0.0";
 
 export interface RangeDownloads {
   start: string;

@@ -13,7 +13,7 @@ labels: bug
 
 ```bash
 # exact command(s) you ran
-pkgsafe check <package>
+trustdep check <package>
 ```
 
 ## Expected behaviour
@@ -26,7 +26,7 @@ pkgsafe check <package>
 
 ## Environment
 
-- pkgsafe version: `pkgsafe --version`
+- trustdep version: `trustdep --version`
 - Node version: `node --version`
 - OS:
 - Package manager (npm / yarn / pnpm) and version:

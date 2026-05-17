@@ -15,7 +15,7 @@ function collect(value: string, previous: string[]): string[] {
 const program = new Command();
 
 program
-  .name("pkgsafe")
+  .name("trustdep")
   .description("npm supply chain security scanner")
   .version(VERSION);
 
@@ -65,6 +65,6 @@ program
   });
 
 program.parseAsync(process.argv).catch((err: unknown) => {
-  process.stderr.write(`pkgsafe: ${err instanceof Error ? err.message : String(err)}\n`);
+  process.stderr.write(`trustdep: ${err instanceof Error ? err.message : String(err)}\n`);
   process.exit(2);
 });

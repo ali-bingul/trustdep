@@ -61,6 +61,6 @@ export class Cache {
   }
 
   static getDefaultPath(): string {
-    return path.join(os.homedir(), ".pkgsafe", "cache.db");
+    return path.join(os.homedir(), ".trustdep", "cache.db");
   }
 }

@@ -1,16 +1,16 @@
-# pkgsafe
+# trustdep
 
 > npm supply chain scanner — scan before you install.
 
-[![npm version](https://img.shields.io/npm/v/pkgsafe)](https://npmjs.com/package/pkgsafe)
-[![CI](https://github.com/pkgsafe/pkgsafe/actions/workflows/ci.yml/badge.svg)](https://github.com/pkgsafe/pkgsafe/actions/workflows/ci.yml)
-[![license](https://img.shields.io/npm/l/pkgsafe)](LICENSE)
-[![node](https://img.shields.io/node/v/pkgsafe)](package.json)
-[![downloads](https://img.shields.io/npm/dm/pkgsafe)](https://npmjs.com/package/pkgsafe)
+[![npm version](https://img.shields.io/npm/v/trustdep)](https://npmjs.com/package/trustdep)
+[![CI](https://github.com/ali-bingul/trustdep/actions/workflows/ci.yml/badge.svg)](https://github.com/ali-bingul/trustdep/actions/workflows/ci.yml)
+[![license](https://img.shields.io/npm/l/trustdep)](LICENSE)
+[![node](https://img.shields.io/node/v/trustdep)](package.json)
+[![downloads](https://img.shields.io/npm/dm/trustdep)](https://npmjs.com/package/trustdep)
 [![PRs welcome](https://img.shields.io/badge/PRs-welcome-brightgreen)](CONTRIBUTING.md)
 
 `npm audit` only checks for known CVEs.
-`pkgsafe` works differently — it analyses every package's history and detects anomalies.
+`trustdep` works differently — it analyses every package's history and detects anomalies.
 
 ## Why?
 
@@ -25,24 +25,24 @@ What they have in common: `npm audit` caught none of them.
 ## Install
 
 ```bash
-npm install -g pkgsafe
+npm install -g trustdep
 ```
 
 ## Usage
 
 ```bash
 # Check a single package
-pkgsafe check axios
-pkgsafe check lodash@4.17.21
+trustdep check axios
+trustdep check lodash@4.17.21
 
 # Scan all dependencies in package.json
-pkgsafe scan
+trustdep scan
 
 # CI integration (exit 1 if risk > high)
-pkgsafe scan --fail-on high --json
+trustdep scan --fail-on high --json
 
 # Re-scan automatically when lock file changes
-pkgsafe watch
+trustdep watch
 ```
 
 ## CI Integration
@@ -53,19 +53,19 @@ name: Supply Chain Check
 on: [push, pull_request]
 
 jobs:
-  pkgsafe:
+  trustdep:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-      - run: npx pkgsafe scan --fail-on high --json > pkgsafe-report.json
+      - run: npx trustdep scan --fail-on high --json > trustdep-report.json
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: pkgsafe-report
-          path: pkgsafe-report.json
+          name: trustdep-report
+          path: trustdep-report.json
 ```
 
 ## What it Checks
@@ -93,11 +93,11 @@ jobs:
 
 ## Configuration
 
-`pkgsafe.config.json` or a `"pkgsafe"` key inside `package.json`:
+`trustdep.config.json` or a `"trustdep"` key inside `package.json`:
 
 ```json
 {
-  "pkgsafe": {
+  "trustdep": {
     "failOn": "high",
     "ignore": ["@company/*", "internal-*"],
     "threshold": 60,
@@ -109,16 +109,16 @@ jobs:
 
 ## Privacy
 
-pkgsafe only contacts `registry.npmjs.org` and `api.osv.dev`.
+trustdep only contacts `registry.npmjs.org` and `api.osv.dev`.
 Package contents are never downloaded — only metadata is analysed.
-Results are cached locally in `~/.pkgsafe/cache.db`.
+Results are cached locally in `~/.trustdep/cache.db`.
 No telemetry is collected.
 
 ## Contributing
 
 ```bash
-git clone https://github.com/pkgsafe/pkgsafe
-cd pkgsafe
+git clone https://github.com/ali-bingul/trustdep
+cd trustdep
 npm install
 npm run dev
 npm test

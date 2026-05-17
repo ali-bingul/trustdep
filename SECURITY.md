@@ -2,7 +2,7 @@
 
 ## Supported versions
 
-The latest minor release of `pkgsafe` receives security fixes.
+The latest minor release of `trustdep` receives security fixes.
 
 | Version | Supported |
 |---------|-----------|
@@ -11,7 +11,7 @@ The latest minor release of `pkgsafe` receives security fixes.
 
 ## Reporting a vulnerability
 
-`pkgsafe` is itself a security tool — we take vulnerability reports seriously.
+`trustdep` is itself a security tool — we take vulnerability reports seriously.
 
 **Please do not open a public GitHub issue.**
 
@@ -40,4 +40,4 @@ We follow coordinated disclosure. After a fix is released, we publish a GitHub S
 ## Out of scope
 
 - Reports against false-positive or false-negative detection results — please open a normal issue with a reproduction.
-- Vulnerabilities in third-party packages that pkgsafe analyses (those should be reported to OSV / the upstream maintainer).
+- Vulnerabilities in third-party packages that trustdep analyses (those should be reported to OSV / the upstream maintainer).

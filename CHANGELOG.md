@@ -21,7 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - **OSV lookup** — known vulnerabilities via `api.osv.dev`.
   - **Downloads sanity check** — filters out unpopular typosquat false positives.
 - Three reporters: human-readable terminal, JSON, SARIF (for GitHub Code Scanning).
-- SQLite-backed registry cache (`~/.pkgsafe/cache.db`) with configurable TTL.
+- SQLite-backed registry cache (`~/.trustdep/cache.db`) with configurable TTL.
 - Lock-file parser for `package-lock.json` v1/v2/v3, `yarn.lock`, and `pnpm-lock.yaml`.
 - Bundled `data/top10k.json` (10 000 most-installed packages) refreshed weekly via a CI workflow.
 - Three GitHub Actions workflows: `ci.yml`, `update-top10k.yml`, `security.yml`.
@@ -31,5 +31,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Trusted-scope allowlist (`@nestjs`, `@babel`, `@types`, `@angular`, `@aws-sdk`, …) exempts known-good organisations from typosquat heuristics.
 - Distance-based typosquat matching is skipped for very short package names (< 5 characters) to avoid noise.
 
-[Unreleased]: https://github.com/pkgsafe/pkgsafe/compare/v1.0.0...HEAD
-[1.0.0]: https://github.com/pkgsafe/pkgsafe/releases/tag/v1.0.0
+[Unreleased]: https://github.com/ali-bingul/trustdep/compare/v1.0.0...HEAD
+[1.0.0]: https://github.com/ali-bingul/trustdep/releases/tag/v1.0.0

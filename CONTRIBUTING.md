@@ -1,12 +1,12 @@
-# Contributing to pkgsafe
+# Contributing to trustdep
 
 Thank you for your interest in making the npm ecosystem safer.
 
 ## Quick start
 
 ```bash
-git clone https://github.com/<your-fork>/pkgsafe
-cd pkgsafe
+git clone https://github.com/<your-fork>/trustdep
+cd trustdep
 npm install
 npm test        # 45+ vitest tests, ~300ms
 npm run build   # bundles to dist/cli.js
@@ -16,7 +16,7 @@ Link the CLI into your shell for live testing:
 
 ```bash
 npm link
-pkgsafe check axios
+trustdep check axios
 ```
 
 ## Project layout

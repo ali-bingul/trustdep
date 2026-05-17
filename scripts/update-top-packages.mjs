@@ -131,7 +131,7 @@ const TOP_CRITICAL = [
 
 async function fetchJson(url) {
   const res = await fetch(url, {
-    headers: { "user-agent": "pkgsafe-update-script" },
+    headers: { "user-agent": "trustdep-update-script" },
   });
   if (!res.ok) throw new Error(`HTTP ${res.status} for ${url}`);
   return res.json();

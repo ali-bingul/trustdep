@@ -54,7 +54,7 @@ export async function watch(opts: WatchCmdOptions): Promise<void> {
     return;
   }
 
-  process.stdout.write(chalk.bold(`pkgsafe watch — ${path.basename(lockPath)}\n`));
+  process.stdout.write(chalk.bold(`trustdep watch — ${path.basename(lockPath)}\n`));
   let previous = parseLockFile(lockPath, await fsp.readFile(lockPath, "utf8"));
 
   const cache = new Cache(Cache.getDefaultPath());
