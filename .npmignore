@@ -13,3 +13,5 @@ coverage/
 .env
 .DS_Store
 pkgsafe-opus-prompt.md
+dist/*.map
+scripts/

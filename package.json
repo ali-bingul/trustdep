@@ -1,14 +1,15 @@
 {
-  "name": "pkgsafe",
+  "name": "trustdep",
   "version": "1.0.0",
   "description": "npm supply chain security scanner — detect typosquatting, maintainer changes, and malicious scripts before npm install",
   "type": "module",
   "main": "./dist/cli.js",
   "bin": {
-    "pkgsafe": "./dist/cli.js"
+    "trustdep": "dist/cli.js"
   },
   "files": [
-    "dist",
+    "dist/cli.js",
+    "dist/cli.d.ts",
     "data",
     "README.md",
     "LICENSE"
@@ -32,6 +33,15 @@
     "devtools",
     "audit"
   ],
+  "author": "Ali Bingul <alibingul40@gmail.com>",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ali-bingul/pkgsafe.git"
+  },
+  "homepage": "https://github.com/ali-bingul/pkgsafe#readme",
+  "bugs": {
+    "url": "https://github.com/ali-bingul/pkgsafe/issues"
+  },
   "license": "MIT",
   "engines": {
     "node": ">=18.0.0"
