@@ -14,13 +14,19 @@
 
 ## Why?
 
-Between 2025 and 2026, the npm ecosystem suffered serious attacks:
+Between 2025 and 2026, the npm ecosystem experienced multiple major supply-chain attacks that exposed critical gaps in traditional dependency security tooling.
 
-- **Sept 2025** — Shai-Hulud worm: 500+ packages compromised
-- **Sept 2025** — chalk/debug: 18 packages, 2.6B weekly downloads affected
-- **Mar 2026** — Axios: 100M+ weekly downloads, RAT installed via phantom dependency
+**Sept 2025 — Shai-Hulud worm**
+A large-scale supply-chain attack compromised 500+ npm packages through maintainer account takeovers and automated propagation across the ecosystem.
 
-What they have in common: `npm audit` caught none of them.
+**Sept 2025 — Chalk / Debug compromise**
+A coordinated phishing-based attack led to the compromise of 18 widely used packages, including `chalk` and `debug`, which collectively account for approximately 2.6 billion weekly downloads. The malicious versions introduced browser-side payloads capable of runtime manipulation and crypto/Web3 transaction tampering.
+
+**Mar 2026 — Axios supply-chain attack**
+The Axios package was compromised via a malicious "phantom dependency" injection, resulting in the distribution of a cross-platform RAT to downstream users, despite Axios being downloaded over 100 million times per week.
+
+**Common pattern**
+These incidents were not traditional vulnerability exploits — they were trusted-publisher compromises and malicious package injections. This means they were not detected by standard tools like `npm audit`, since no CVE-based vulnerability existed at detection time.
 
 ## Install
 
