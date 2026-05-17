@@ -12,3 +12,5 @@ coverage/
 *.log
 .env
 .DS_Store
+dist/*.map
+scripts/
