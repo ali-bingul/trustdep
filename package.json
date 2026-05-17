@@ -1,6 +1,6 @@
 {
   "name": "trustdep",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "npm supply chain security scanner — detect typosquatting, maintainer changes, and malicious scripts before npm install",
   "type": "module",
   "main": "./dist/cli.js",
