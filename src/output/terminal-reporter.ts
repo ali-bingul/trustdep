@@ -81,9 +81,7 @@ export interface TerminalReportOptions {
 
 export function reportSingle(result: PackageResult, opts: TerminalReportOptions = {}): string {
   const lines: string[] = [];
-  lines.push(chalk.bold(`pkgsafe v${opts.version ?? "1.0.0"} — npm supply chain scanner`));
-  lines.push("");
-  lines.push(formatPackageLine(result));
+  lines.push(chalk.bold(`trustdep v${opts.version ?? "1.0.0"} — npm supply chain scanner`));
   if (result.signals.length > 0) {
     lines.push(formatSignalTree(result.signals));
   } else if (opts.verbose) {
@@ -98,7 +96,7 @@ export function reportSingle(result: PackageResult, opts: TerminalReportOptions 
 
 export function reportScan(scan: ScanResult, opts: TerminalReportOptions = {}): string {
   const lines: string[] = [];
-  lines.push(chalk.bold(`pkgsafe v${opts.version ?? "1.0.0"} — npm supply chain scanner`));
+  lines.push(chalk.bold(`trustdep v${opts.version ?? "1.0.0"} — npm supply chain scanner`));
   lines.push("");
   if (opts.cwd) {
     lines.push(`Scanned ${scan.packages.length} packages in ${opts.cwd}`);
@@ -145,28 +143,28 @@ function verdict(level: RiskLevel): string {
   switch (level) {
     case "clean":
     case "low":
-      return chalk.green("✓ pkgsafe found no significant issues.");
+      return chalk.green("✓ trustdep found no significant issues.");
     case "medium":
-      return chalk.yellow("⚠ pkgsafe found medium-risk signals. Review recommended.");
+      return chalk.yellow("⚠ trustdep found medium-risk signals. Review recommended.");
     case "high":
-      return chalk.red("✗ pkgsafe found high-risk signals. Investigate before installing.");
+      return chalk.red("✗ trustdep found high-risk signals. Investigate before installing.");
     case "critical":
-      return chalk.red.bold("✗ pkgsafe found critical issues. Do not install.");
+      return chalk.red.bold("✗ trustdep found critical issues. Do not install.");
   }
 }
 
 function summaryVerdict(scan: ScanResult): string {
   if (scan.summary.critical > 0) {
-    return chalk.red.bold("✗ pkgsafe found critical issues. Fix before proceeding.");
+    return chalk.red.bold("✗ trustdep found critical issues. Fix before proceeding.");
   }
   if (scan.summary.high > 0) {
-    return chalk.red("✗ pkgsafe found high-risk packages.");
+    return chalk.red("✗ trustdep found high-risk packages.");
   }
   if (scan.summary.medium > 0) {
-    return chalk.yellow("⚠ pkgsafe found medium-risk packages. Review recommended.");
+    return chalk.yellow("⚠ trustdep found medium-risk packages. Review recommended.");
   }
   if (scan.summary.low > 0) {
-    return chalk.yellow("⚠ pkgsafe found low-risk informational signals.");
+    return chalk.yellow("⚠ trustdep found low-risk informational signals.");
   }
   return chalk.green("✓ All packages clean.");
 }

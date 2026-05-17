@@ -107,9 +107,9 @@ export function toSarif(scan: ScanResult, version = "1.0.0"): unknown {
       {
         tool: {
           driver: {
-            name: "pkgsafe",
+            name: "trustdep",
             version,
-            informationUri: "https://github.com/pkgsafe/pkgsafe",
+            informationUri: "https://github.com/ali-bingul/trustdep",
             rules: [...rules.values()],
           },
         },

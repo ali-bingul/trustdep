@@ -14,7 +14,7 @@ export const DEFAULT_CONFIG: PkgsafeConfig = {
   concurrency: 5,
 };
 
-const CONFIG_FILES = ["pkgsafe.config.json", "pkgsafe.config.js", "pkgsafe.config.mjs"];
+const CONFIG_FILES = ["trustdep.config.json", "trustdep.config.js", "trustdep.config.mjs"];
 
 async function fileExists(p: string): Promise<boolean> {
   try {
@@ -38,7 +38,7 @@ async function findConfigFile(cwd: string): Promise<{ file: string; type: "json"
     if (await fileExists(pkgPath)) {
       try {
         const raw = JSON.parse(await fs.readFile(pkgPath, "utf8")) as Record<string, unknown>;
-        if (raw && typeof raw === "object" && "pkgsafe" in raw) {
+        if (raw && typeof raw === "object" && "trustdep" in raw) {
           return { file: pkgPath, type: "json" };
         }
       } catch {
@@ -81,7 +81,7 @@ export async function loadConfig(cwd: string = process.cwd()): Promise<PkgsafeCo
   try {
     if (found.file.endsWith("package.json")) {
       const raw = JSON.parse(await fs.readFile(found.file, "utf8")) as Record<string, unknown>;
-      return validateConfig(raw.pkgsafe);
+      return validateConfig(raw.trustdep);
     }
     if (found.type === "json") {
       const raw = JSON.parse(await fs.readFile(found.file, "utf8")) as unknown;

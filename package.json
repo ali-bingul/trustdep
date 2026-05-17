@@ -36,11 +36,11 @@
   "author": "Ali Bingul <alibingul40@gmail.com>",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ali-bingul/pkgsafe.git"
+    "url": "git+https://github.com/ali-bingul/trustdep.git"
   },
-  "homepage": "https://github.com/ali-bingul/pkgsafe#readme",
+  "homepage": "https://github.com/ali-bingul/trustdep#readme",
   "bugs": {
-    "url": "https://github.com/ali-bingul/pkgsafe/issues"
+    "url": "https://github.com/ali-bingul/trustdep/issues"
   },
   "license": "MIT",
   "engines": {

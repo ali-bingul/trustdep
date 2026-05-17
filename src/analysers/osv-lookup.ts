@@ -4,7 +4,7 @@ import type { Cache } from "../cache/cache.js";
 import type { OsvVulnerability, Signal } from "../types.js";
 
 const OSV_URL = "https://api.osv.dev/v1/query";
-const USER_AGENT = "pkgsafe/1.0.0";
+const USER_AGENT = "trustdep/1.0.0";
 
 export async function lookupOsv(
   name: string,

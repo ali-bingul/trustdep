@@ -11,7 +11,7 @@ labels: enhancement
 
 ## Proposed solution
 
-<!-- How would pkgsafe detect / report it? Pseudocode welcome. -->
+<!-- How would trustdep detect / report it? Pseudocode welcome. -->
 
 ## Alternatives considered
 
