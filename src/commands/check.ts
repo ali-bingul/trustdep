@@ -1,5 +1,5 @@
 // filepath: src/commands/check.ts
-import ora from "ora";
+import { createSpinner } from "../output/spinner.js";
 import { loadConfig } from "../config.js";
 import { Cache } from "../cache/cache.js";
 import { checkPackages } from "../core/check-package.js";
@@ -56,7 +56,7 @@ export async function check(specs: string[], opts: CheckCmdOptions): Promise<voi
   const isMachineOutput = opts.json || opts.sarif;
   const spinner = isMachineOutput
     ? null
-    : ora(`Checking ${targets.length} package${targets.length === 1 ? "" : "s"}...`).start();
+    : createSpinner(`Checking ${targets.length} package${targets.length === 1 ? "" : "s"}...`);
 
   try {
     const start = Date.now();

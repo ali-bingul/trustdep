@@ -1,5 +1,5 @@
 // filepath: src/registry/npm-client.ts
-import got, { HTTPError } from "got";
+import { httpJson, HttpError } from "./http.js";
 import type { Cache } from "../cache/cache.js";
 import { PackageNotFoundError, type Packument, type PackumentVersion } from "../types.js";
 
@@ -26,23 +26,14 @@ export class NpmClient {
 
   private async getJson<T>(url: string): Promise<T> {
     try {
-      return await got(url, {
-        timeout: { request: TIMEOUT_MS },
-        headers: {
-          "user-agent": USER_AGENT,
-          accept: "application/json",
-        },
-        retry: {
-          limit: 2,
-          methods: ["GET"],
-          statusCodes: [408, 429, 500, 502, 503, 504],
-        },
-      }).json<T>();
+      return await httpJson<T>(url, {
+        timeoutMs: TIMEOUT_MS,
+        retries: 2,
+        headers: { "user-agent": USER_AGENT },
+      });
     } catch (err) {
-      if (err instanceof HTTPError) {
-        if (err.response.statusCode === 404) {
-          throw new PackageNotFoundError(url);
-        }
+      if (err instanceof HttpError && err.statusCode === 404) {
+        throw new PackageNotFoundError(url);
       }
       throw err;
     }

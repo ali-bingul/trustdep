@@ -1,7 +1,7 @@
 // filepath: src/commands/scan.ts
 import { promises as fs } from "node:fs";
 import path from "node:path";
-import ora from "ora";
+import { createSpinner } from "../output/spinner.js";
 import { loadConfig } from "../config.js";
 import { Cache } from "../cache/cache.js";
 import { checkPackages } from "../core/check-package.js";
@@ -106,7 +106,7 @@ export async function scan(opts: ScanCmdOptions): Promise<void> {
   const cache = useCache ? new Cache(Cache.getDefaultPath()) : undefined;
   const spinner = isMachineOutput
     ? null
-    : ora(`Scanning ${targets.length} packages...`).start();
+    : createSpinner(`Scanning ${targets.length} packages...`);
 
   const start = Date.now();
   const results = await checkPackages(
