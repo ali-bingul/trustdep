@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-05-18
+
+### Changed
+- **Dependency footprint reduced from 8 to 4 runtime dependencies.**
+- Replaced `got` with Node 18+ native `fetch` (new `src/registry/http.ts` helper with retry + AbortController timeout).
+- Replaced `p-limit` with a ~15-line inline worker-pool concurrency limiter in `src/core/check-package.ts`.
+- Replaced `ora` with a minimal stderr spinner (`src/output/spinner.ts`) that gracefully degrades in non-TTY contexts.
+- Removed unused `cli-table3` dependency.
+- Upgraded `tsup` to `^8.5.1` (fixes GHSA-3mv9-4h5g-vhg3).
+- Upgraded `vitest` to `^2.1.9` (fixes GHSA-9crc-q9x8-hgqq).
+
+### Security
+- `npm audit --omit=dev` now reports **0 vulnerabilities**.
+- Self-scan (`trustdep scan`) on its own deps: 2 high + 2 medium findings → reduced to 1 medium (known false-positive on `commander` new-publisher signal).
+
 ## [1.0.1] - 2026-05-18
 
 ### Fixed

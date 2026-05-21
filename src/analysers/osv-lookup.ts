@@ -1,5 +1,5 @@
 // filepath: src/analysers/osv-lookup.ts
-import got from "got";
+import { httpJson } from "../registry/http.js";
 import type { Cache } from "../cache/cache.js";
 import type { OsvVulnerability, Signal } from "../types.js";
 
@@ -19,17 +19,16 @@ export async function lookupOsv(
   }
 
   try {
-    const res = await got
-      .post(OSV_URL, {
-        json: {
-          package: { name, ecosystem: "npm" },
-          version,
-        },
-        timeout: { request: 15_000 },
-        headers: { "user-agent": USER_AGENT },
-        retry: { limit: 1 },
-      })
-      .json<{ vulns?: OsvVulnerability[] }>();
+    const res = await httpJson<{ vulns?: OsvVulnerability[] }>(OSV_URL, {
+      method: "POST",
+      body: {
+        package: { name, ecosystem: "npm" },
+        version,
+      },
+      timeoutMs: 15_000,
+      retries: 1,
+      headers: { "user-agent": USER_AGENT },
+    });
     const vulns = res.vulns ?? [];
     if (cache && useCache) {
       cache.set(key, vulns, 1); // 1 hour TTL

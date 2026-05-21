@@ -1,5 +1,5 @@
 // filepath: src/registry/downloads-api.ts
-import got from "got";
+import { httpJson } from "./http.js";
 
 const BASE = "https://api.npmjs.org/downloads";
 const USER_AGENT = "trustdep/1.0.0";
@@ -16,10 +16,10 @@ export async function fetchPointDownloads(
   period: "last-day" | "last-week" | "last-month" = "last-week"
 ): Promise<number> {
   try {
-    const res = await got(`${BASE}/point/${period}/${encodeURIComponent(name)}`, {
-      timeout: { request: 15_000 },
-      headers: { "user-agent": USER_AGENT },
-    }).json<{ downloads: number }>();
+    const res = await httpJson<{ downloads: number }>(
+      `${BASE}/point/${period}/${encodeURIComponent(name)}`,
+      { timeoutMs: 15_000, headers: { "user-agent": USER_AGENT } }
+    );
     return res.downloads ?? 0;
   } catch {
     return 0;
@@ -31,10 +31,10 @@ export async function fetchRangeDownloads(
   range: string
 ): Promise<RangeDownloads | null> {
   try {
-    return await got(`${BASE}/range/${range}/${encodeURIComponent(name)}`, {
-      timeout: { request: 15_000 },
-      headers: { "user-agent": USER_AGENT },
-    }).json<RangeDownloads>();
+    return await httpJson<RangeDownloads>(
+      `${BASE}/range/${range}/${encodeURIComponent(name)}`,
+      { timeoutMs: 15_000, headers: { "user-agent": USER_AGENT } }
+    );
   } catch {
     return null;
   }

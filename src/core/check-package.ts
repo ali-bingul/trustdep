@@ -1,5 +1,4 @@
 // filepath: src/core/check-package.ts
-import pLimit from "p-limit";
 import { Cache } from "../cache/cache.js";
 import { NpmClient } from "../registry/npm-client.js";
 import { analyseTyposquat, verifyTyposquatSignals } from "../analysers/typosquat.js";
@@ -114,19 +113,25 @@ export async function checkPackages(
   opts: CheckOptions,
   onProgress?: (done: number, total: number, current: string) => void
 ): Promise<PackageResult[]> {
-  const limit = pLimit(opts.config.concurrency);
+  const concurrency = Math.max(1, opts.config.concurrency);
   let done = 0;
   const total = packages.length;
+  const results: PackageResult[] = new Array(total);
 
-  const results = await Promise.all(
-    packages.map(p =>
-      limit(async () => {
-        const r = await checkPackage(p.name, p.version, opts);
-        done++;
-        onProgress?.(done, total, p.name);
-        return r;
-      })
-    )
-  );
+  let nextIndex = 0;
+  async function worker(): Promise<void> {
+    while (true) {
+      const idx = nextIndex++;
+      if (idx >= total) return;
+      const p = packages[idx]!;
+      const r = await checkPackage(p.name, p.version, opts);
+      results[idx] = r;
+      done++;
+      onProgress?.(done, total, p.name);
+    }
+  }
+
+  const workers = Array.from({ length: Math.min(concurrency, total) }, () => worker());
+  await Promise.all(workers);
   return results;
 }
