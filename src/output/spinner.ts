@@ -7,6 +7,7 @@ const INTERVAL_MS = 80;
 export interface Spinner {
   text: string;
   stop(): void;
+  fail(message?: string): void;
 }
 
 export function createSpinner(initialText: string): Spinner {
@@ -25,6 +26,10 @@ export function createSpinner(initialText: string): Spinner {
       },
       stop(): void {
         state.stopped = true;
+      },
+      fail(message?: string): void {
+        state.stopped = true;
+        if (message) process.stderr.write(`${message}\n`);
       },
     };
   }
@@ -53,6 +58,13 @@ export function createSpinner(initialText: string): Spinner {
       clearInterval(timer);
       // Clear the spinner line.
       process.stderr.write("\r\x1b[2K");
+    },
+    fail(message?: string): void {
+      if (state.stopped) return;
+      state.stopped = true;
+      clearInterval(timer);
+      process.stderr.write("\r\x1b[2K");
+      if (message) process.stderr.write(`${message}\n`);
     },
   };
 }
