@@ -50,10 +50,25 @@ export function toJsonSingle(result: PackageResult, version = VERSION): unknown 
   };
 }
 
+interface SarifLocation {
+  physicalLocation: {
+    artifactLocation: { uri: string };
+    region?: { startLine: number };
+  };
+  logicalLocations?: Array<{ name: string; fullyQualifiedName?: string; kind?: string }>;
+}
+
 interface SarifResult {
   ruleId: string;
   level: "none" | "note" | "warning" | "error";
   message: { text: string };
+  /**
+   * GitHub Code Scanning rejects results without at least one location with
+   * "locationFromSarifResult: expected at least one location". trustdep findings
+   * are package-level, so we anchor them to the project's manifest.
+   */
+  locations: SarifLocation[];
+  partialFingerprints?: Record<string, string>;
   properties: { weight: number; package: string; version: string };
 }
 
@@ -96,6 +111,26 @@ export function toSarif(scan: ScanResult, version = VERSION): unknown {
         ruleId: sig.id,
         level: levelToSarif(sig.level),
         message: { text: `${pkg.name}@${pkg.version}: ${sig.description}` },
+        locations: [
+          {
+            physicalLocation: {
+              artifactLocation: { uri: "package.json" },
+              region: { startLine: 1 },
+            },
+            logicalLocations: [
+              {
+                name: pkg.name,
+                fullyQualifiedName: `${pkg.name}@${pkg.version}`,
+                kind: "package",
+              },
+            ],
+          },
+        ],
+        // Stable per-(package, signal) fingerprint so Code Scanning can
+        // dedupe alerts across scans and re-open ones that come back.
+        partialFingerprints: {
+          trustdepSignal: `${pkg.name}@${sig.id}`,
+        },
         properties: { weight: sig.weight, package: pkg.name, version: pkg.version },
       });
     }
