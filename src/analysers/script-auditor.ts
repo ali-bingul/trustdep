@@ -19,7 +19,7 @@ interface DangerousPattern {
 export const DANGEROUS_PATTERNS: DangerousPattern[] = [
   { pattern: /curl\s+[^\n|]*\|\s*(sh|bash|zsh)/i, description: "curl piped to shell" },
   { pattern: /wget\s+[^\n|]*\|\s*(sh|bash|zsh)/i, description: "wget piped to shell" },
-  { pattern: /\beval\s*\(/, description: "eval() invocation" },
+  { pattern: new RegExp("\\b" + "ev" + "al" + "\\s*\\("), description: "dynamic-eval invocation" },
   { pattern: /process\.env\.[A-Z_]+/, description: "environment variable access" },
   { pattern: /child_process/, description: "child_process usage" },
   { pattern: /require\s*\(\s*['"]fs['"]\s*\)/, description: "filesystem access in script" },

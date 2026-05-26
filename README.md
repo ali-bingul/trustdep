@@ -113,12 +113,28 @@ jobs:
 }
 ```
 
-## Privacy
+## Network Access
 
-trustdep only contacts `registry.npmjs.org` and `api.osv.dev`.
-Package contents are never downloaded — only metadata is analysed.
-Results are cached locally in `~/.trustdep/cache.db`.
-No telemetry is collected.
+trustdep is a network-based scanner — it must reach a small set of public
+metadata APIs to do its job. Nothing else is contacted, no telemetry is sent,
+and **package contents (tarballs) are never downloaded** — only metadata is
+analysed.
+
+| Endpoint | Purpose | Used by |
+|---|---|---|
+| `https://registry.npmjs.org` | Fetch the packument (versions, maintainers, `dist`, `time`, lifecycle scripts) for the package being analysed. | typosquat verification, supply-chain analyser, script auditor, phantom-dependency analyser |
+| `https://api.npmjs.org/downloads` | Look up recent download counts to distinguish legitimate packages from typosquat candidates. | typosquat analyser |
+| `https://api.osv.dev/v1/query` | Query the Open Source Vulnerability database for known CVEs / GHSAs / malicious package advisories. | OSV analyser |
+
+All requests:
+
+- are plain HTTPS `GET`/`POST` against the URLs listed above;
+- carry a `User-Agent` of `trustdep/<version> (+https://github.com/ali-bingul/trustdep)`;
+- have a hard timeout (15–30 s) and a single retry;
+- send no authentication, no tokens, no user identifiers, and no telemetry.
+
+Responses are cached locally in `~/.trustdep/cache.db` (SQLite). Use
+`--no-cache` to bypass the cache for a fresh fetch.
 
 ## Contributing
 
