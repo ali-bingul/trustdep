@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.1] - 2026-05-26
+
+### Fixed
+- **SARIF output now passes GitHub Code Scanning validation.** Every `result` entry includes a required `locations[]` (anchored to `package.json`) plus a `logicalLocations` entry naming the package, fixing the `locationFromSarifResult: expected at least one location` upload error.
+- Added stable `partialFingerprints.trustdepSignal` (`<package>@<signalId>`) to each SARIF result so Code Scanning can dedupe and re-open alerts across scans.
+
 ## [1.2.0] - 2026-05-26
 
 ### Added
