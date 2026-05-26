@@ -1,5 +1,6 @@
 // filepath: src/output/json-reporter.ts
 import type { PackageResult, ScanResult, Signal } from "../types.js";
+import { VERSION } from "../version.js";
 
 export interface JsonReport {
   version: string;
@@ -16,7 +17,7 @@ export interface JsonReport {
   }>;
 }
 
-export function toJsonReport(scan: ScanResult, version = "1.0.0"): JsonReport {
+export function toJsonReport(scan: ScanResult, version = VERSION): JsonReport {
   return {
     version,
     timestamp: new Date().toISOString(),
@@ -33,7 +34,7 @@ export function toJsonReport(scan: ScanResult, version = "1.0.0"): JsonReport {
   };
 }
 
-export function toJsonSingle(result: PackageResult, version = "1.0.0"): unknown {
+export function toJsonSingle(result: PackageResult, version = VERSION): unknown {
   return {
     version,
     timestamp: new Date().toISOString(),
@@ -77,7 +78,7 @@ function levelToSarif(level: string): "none" | "note" | "warning" | "error" {
   }
 }
 
-export function toSarif(scan: ScanResult, version = "1.0.0"): unknown {
+export function toSarif(scan: ScanResult, version = VERSION): unknown {
   const rules = new Map<string, SarifRule>();
   const results: SarifResult[] = [];
 

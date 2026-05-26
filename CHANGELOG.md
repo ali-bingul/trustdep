@@ -7,6 +7,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-05-26
+
+### Added
+- **Richer vulnerability reporting.** OSV findings now extract and display:
+  - associated **CVE identifiers** alongside the GHSA id;
+  - a parsed **CVSS base score and severity bucket** (e.g. `CVSS 7.5 (High)`), with CVSS v3 and v4 vector support;
+  - the first known **fixed version** (`affected.ranges`);
+  - an **advisory URL** (`More:` link).
+- New `Signal.meta` field on the public types (`advisoryId`, `cveIds`, `cvssScore`, `cvssSeverity`, `cvssVector`, `fixedVersion`, `url`, `recommendation`). Carried through JSON/SARIF output automatically.
+- **Recommended actions** summary block in the terminal report. Aggregates per-package upgrade targets (highest fix version wins), flags malicious packages for removal, and calls out advisories with no published fix.
+
+### Changed
+- Terminal signal rendering: severity-coloured headers (critical → red bold, high → red, medium/low → yellow), wrapped description, and dedicated `Severity:` / `Fix:` / `More:` lines instead of a single truncated `Evidence:` blob.
+- `OsvVulnerability` type extended with `aliases`, `references`, `affected` (non-breaking).
+
+### Fixed
+- **CI (`update-top10k` workflow):** documented and worked around the "GitHub Actions is not permitted to create or approve pull requests" failure. The PR step now uses `${{ secrets.GH_PAT || secrets.GITHUB_TOKEN }}`, and the workflow includes inline guidance for enabling the repo setting or supplying a PAT.
+
 ## [1.1.0] - 2026-05-18
 
 ### Changed

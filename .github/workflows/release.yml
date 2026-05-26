@@ -1,0 +1,110 @@
+name: Release on version bump
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "package.json"
+      - "CHANGELOG.md"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2 # we need the previous commit to diff package.json
+
+      - name: Read current version
+        id: version
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "tag=v$VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Skip if tag already exists
+        id: tag_exists
+        run: |
+          TAG="${{ steps.version.outputs.tag }}"
+          if git rev-parse --verify --quiet "refs/tags/$TAG" >/dev/null; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+            echo "Tag $TAG already exists locally; nothing to do."
+          elif git ls-remote --exit-code --tags origin "refs/tags/$TAG" >/dev/null; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+            echo "Tag $TAG already exists on origin; nothing to do."
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Detect version change
+        id: changed
+        if: steps.tag_exists.outputs.exists == 'false'
+        run: |
+          PREV_VERSION=$(git show HEAD~1:package.json 2>/dev/null | node -e "let s='';process.stdin.on('data',d=>s+=d).on('end',()=>{try{console.log(JSON.parse(s).version)}catch{console.log('')}})" || echo "")
+          echo "previous=$PREV_VERSION"
+          if [ "$PREV_VERSION" != "${{ steps.version.outputs.version }}" ]; then
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "Version unchanged ($PREV_VERSION); skipping release."
+          fi
+
+      - name: Extract changelog notes for this version
+        id: notes
+        if: steps.tag_exists.outputs.exists == 'false' && steps.changed.outputs.changed == 'true'
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          # Pull the body of the matching `## [x.y.z]` section from CHANGELOG.md
+          # (everything up to the next `## ` heading).
+          NOTES=$(awk -v ver="$VERSION" '
+            $0 ~ "^## \\[" ver "\\]" { capture = 1; next }
+            capture && /^## / { exit }
+            capture { print }
+          ' CHANGELOG.md)
+          if [ -z "$(echo "$NOTES" | tr -d "[:space:]")" ]; then
+            NOTES="Release v$VERSION. See CHANGELOG.md for details."
+          fi
+          {
+            echo "body<<EOF"
+            echo "$NOTES"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Setup Node
+        if: steps.tag_exists.outputs.exists == 'false' && steps.changed.outputs.changed == 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install + build + test
+        if: steps.tag_exists.outputs.exists == 'false' && steps.changed.outputs.changed == 'true'
+        run: |
+          npm ci
+          npm run build
+          npm test --silent
+
+      - name: Create tag
+        if: steps.tag_exists.outputs.exists == 'false' && steps.changed.outputs.changed == 'true'
+        env:
+          TAG: ${{ steps.version.outputs.tag }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git tag -a "$TAG" -m "Release $TAG"
+          git push origin "$TAG"
+
+      - name: Create GitHub release
+        if: steps.tag_exists.outputs.exists == 'false' && steps.changed.outputs.changed == 'true'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.version.outputs.tag }}
+          name: ${{ steps.version.outputs.tag }}
+          body: ${{ steps.notes.outputs.body }}
+          draft: false
+          prerelease: false
+          token: ${{ secrets.GITHUB_TOKEN }}

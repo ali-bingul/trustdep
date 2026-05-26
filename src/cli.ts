@@ -4,9 +4,7 @@ import { check } from "./commands/check.js";
 import { scan } from "./commands/scan.js";
 import { watch } from "./commands/watch.js";
 import type { RiskLevel } from "./types.js";
-
-declare const __VERSION__: string;
-const VERSION = typeof __VERSION__ !== "undefined" ? __VERSION__ : "1.0.0";
+import { VERSION } from "./version.js";
 
 function collect(value: string, previous: string[]): string[] {
   return [...previous, value];
