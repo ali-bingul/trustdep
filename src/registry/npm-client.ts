@@ -2,9 +2,9 @@
 import { httpJson, HttpError } from "./http.js";
 import type { Cache } from "../cache/cache.js";
 import { PackageNotFoundError, type Packument, type PackumentVersion } from "../types.js";
+import { USER_AGENT } from "../version.js";
 
 const REGISTRY = "https://registry.npmjs.org";
-const USER_AGENT = "trustdep/1.0.0 (https://github.com/ali-bingul/trustdep)";
 const TIMEOUT_MS = 30_000;
 
 export interface NpmClientOptions {

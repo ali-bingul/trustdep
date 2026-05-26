@@ -1,8 +1,8 @@
 // filepath: src/registry/downloads-api.ts
 import { httpJson } from "./http.js";
+import { USER_AGENT } from "../version.js";
 
 const BASE = "https://api.npmjs.org/downloads";
-const USER_AGENT = "trustdep/1.0.0";
 
 export interface RangeDownloads {
   start: string;

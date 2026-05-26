@@ -8,6 +8,29 @@ export interface Signal {
   weight: number;
   level: RiskLevel;
   evidence?: string;
+  /** Optional structured metadata used for richer reporting. */
+  meta?: SignalMeta;
+}
+
+export interface SignalMeta {
+  /** Advisory id (e.g. GHSA-xxxx-xxxx-xxxx). */
+  advisoryId?: string;
+  /** Associated CVE identifiers parsed from OSV aliases. */
+  cveIds?: string[];
+  /** Other aliases (non-CVE) parsed from OSV. */
+  aliases?: string[];
+  /** Parsed CVSS score (numeric, 0–10). */
+  cvssScore?: number;
+  /** CVSS severity bucket (None/Low/Medium/High/Critical) derived from cvssScore. */
+  cvssSeverity?: string;
+  /** Raw CVSS vector string, if available. */
+  cvssVector?: string;
+  /** First non-vulnerable version, if known. */
+  fixedVersion?: string;
+  /** Primary reference URL (advisory page). */
+  url?: string;
+  /** Suggested remediation hint for the action summary. */
+  recommendation?: string;
 }
 
 export interface PackageResult {
@@ -80,10 +103,37 @@ export interface OsvSeverity {
   score: string;
 }
 
+export interface OsvReference {
+  type?: string;
+  url: string;
+}
+
+export interface OsvRangeEvent {
+  introduced?: string;
+  fixed?: string;
+  last_affected?: string;
+  limit?: string;
+}
+
+export interface OsvRange {
+  type: string;
+  events: OsvRangeEvent[];
+}
+
+export interface OsvAffected {
+  package?: { name?: string; ecosystem?: string };
+  ranges?: OsvRange[];
+  versions?: string[];
+}
+
 export interface OsvVulnerability {
   id: string;
   summary: string;
+  details?: string;
+  aliases?: string[];
   severity?: OsvSeverity[];
+  references?: OsvReference[];
+  affected?: OsvAffected[];
 }
 
 export class PackageNotFoundError extends Error {
