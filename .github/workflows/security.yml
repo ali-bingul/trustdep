@@ -10,6 +10,14 @@ on:
   push:
     branches: [main]
 
+permissions:
+  contents: read
+  # Required by github/codeql-action/upload-sarif to publish results to the
+  # repository's Security tab. Without this, the upload step fails with
+  # "Resource not accessible by integration".
+  security-events: write
+  actions: read
+
 jobs:
   scan:
     runs-on: ubuntu-latest
@@ -19,11 +27,39 @@ jobs:
         with:
           node-version: 20
           cache: npm
+
       - run: npm ci
-      - name: Run trustdep scan
-        run: npx trustdep scan --fail-on high --sarif > trustdep.sarif
+      - run: npm run build
+
+      - name: Run trustdep self-scan
+        # `--fail-on high` will exit non-zero on high/critical findings; we
+        # capture exit code so the SARIF file is still produced and uploaded
+        # to the Security tab, then re-fail the job at the end.
+        run: |
+          set +e
+          node dist/cli.js scan --fail-on high --sarif > trustdep.sarif
+          echo "exit_code=$?" >> "$GITHUB_ENV"
+
+      - name: Validate SARIF output
+        # Defensive check: an empty or malformed SARIF makes upload-sarif crash
+        # with a JSON parse error and hides the real scan failure.
+        run: |
+          if [ ! -s trustdep.sarif ]; then
+            echo "::error::trustdep produced an empty SARIF file."
+            exit 1
+          fi
+          node -e "JSON.parse(require('fs').readFileSync('trustdep.sarif','utf8'))" \
+            || { echo "::error::trustdep.sarif is not valid JSON"; exit 1; }
+
       - name: Upload SARIF
         if: always()
-        uses: github/codeql-action/upload-sarif@v3
+        uses: github/codeql-action/upload-sarif@v4
         with:
           sarif_file: trustdep.sarif
+          category: trustdep
+
+      - name: Fail job on high/critical findings
+        if: env.exit_code != '0'
+        run: |
+          echo "::error::trustdep scan reported findings at or above the configured threshold (--fail-on high)."
+          exit "${exit_code:-1}"
