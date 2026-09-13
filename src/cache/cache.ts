@@ -2,65 +2,109 @@
 import path from "node:path";
 import os from "node:os";
 import fs from "node:fs";
-import Database from "better-sqlite3";
+import { createHash, randomBytes } from "node:crypto";
+
+interface CacheEntry<T> {
+  value: T;
+  expiresAt: number;
+}
 
 export class Cache {
-  private db: Database.Database;
+  private dir: string;
 
-  constructor(dbPath: string) {
-    const dir = path.dirname(dbPath);
-    if (!fs.existsSync(dir)) {
-      fs.mkdirSync(dir, { recursive: true });
-    }
-    this.db = new Database(dbPath);
-    this.db.pragma("journal_mode = WAL");
-    this.db.exec(`
-      CREATE TABLE IF NOT EXISTS cache (
-        key TEXT PRIMARY KEY,
-        value TEXT NOT NULL,
-        expires_at INTEGER NOT NULL
-      );
-    `);
+  constructor(dir: string) {
+    this.dir = dir;
+    fs.mkdirSync(this.dir, { recursive: true, mode: 0o700 });
   }
 
   get<T>(key: string): T | null {
-    const row = this.db
-      .prepare("SELECT value, expires_at FROM cache WHERE key = ?")
-      .get(key) as { value: string; expires_at: number } | undefined;
-    if (!row) return null;
-    if (row.expires_at < Date.now()) {
-      this.delete(key);
-      return null;
-    }
+    const file = this.fileFor(key);
+    let raw: string;
     try {
-      return JSON.parse(row.value) as T;
+      raw = fs.readFileSync(file, "utf8");
     } catch {
       return null;
     }
+
+    let entry: CacheEntry<T> | null;
+    try {
+      entry = JSON.parse(raw) as CacheEntry<T>;
+    } catch {
+      this.removeFile(file);
+      return null;
+    }
+
+    if (!entry || typeof entry.expiresAt !== "number") {
+      this.removeFile(file);
+      return null;
+    }
+    if (entry.expiresAt < Date.now()) {
+      this.removeFile(file);
+      return null;
+    }
+    return entry.value;
   }
 
   set<T>(key: string, value: T, ttlHours: number): void {
-    const expiresAt = Date.now() + ttlHours * 3600 * 1000;
-    this.db
-      .prepare(
-        "INSERT OR REPLACE INTO cache (key, value, expires_at) VALUES (?, ?, ?)"
-      )
-      .run(key, JSON.stringify(value), expiresAt);
+    const entry: CacheEntry<T> = {
+      value,
+      expiresAt: Date.now() + ttlHours * 3600 * 1000,
+    };
+    const file = this.fileFor(key);
+    const tmp = `${file}.${process.pid}.${randomBytes(4).toString("hex")}.tmp`;
+    try {
+      fs.writeFileSync(tmp, JSON.stringify(entry), { encoding: "utf8", mode: 0o600 });
+      fs.renameSync(tmp, file);
+    } catch {
+      this.removeFile(tmp);
+    }
   }
 
   delete(key: string): void {
-    this.db.prepare("DELETE FROM cache WHERE key = ?").run(key);
+    this.removeFile(this.fileFor(key));
   }
 
   cleanup(): void {
-    this.db.prepare("DELETE FROM cache WHERE expires_at < ?").run(Date.now());
+    let names: string[];
+    try {
+      names = fs.readdirSync(this.dir);
+    } catch {
+      return;
+    }
+
+    const now = Date.now();
+    for (const name of names) {
+      if (!name.endsWith(".json")) continue;
+      const file = path.join(this.dir, name);
+      try {
+        const entry = JSON.parse(fs.readFileSync(file, "utf8")) as CacheEntry<unknown> | null;
+        if (!entry || typeof entry.expiresAt !== "number" || entry.expiresAt < now) {
+          this.removeFile(file);
+        }
+      } catch {
+        this.removeFile(file);
+      }
+    }
   }
 
   close(): void {
-    this.db.close();
+    return;
+  }
+
+  private fileFor(key: string): string {
+    const hash = createHash("sha256").update(key).digest("hex");
+    return path.join(this.dir, `${hash}.json`);
+  }
+
+  private removeFile(file: string): void {
+    try {
+      fs.rmSync(file, { force: true });
+    } catch {
+      return;
+    }
   }
 
   static getDefaultPath(): string {
-    return path.join(os.homedir(), ".trustdep", "cache.db");
+    return path.join(os.homedir(), ".trustdep", "cache");
   }
 }

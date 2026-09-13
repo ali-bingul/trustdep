@@ -7,6 +7,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.0.0] - 2026-09-13
+
+### Changed
+- **BREAKING — minimum supported Node.js is now `>=20.19.0`** (was `>=18.0.0`). Node 18 reached end-of-life on 2025-04-30 and the test toolchain (`vitest` 4) no longer runs on it. The CI matrix is now Node 20 / 22 / 24.
+- **Registry cache is now a dependency-free file store.** Responses are kept as one JSON file per key under `~/.trustdep/cache/` (atomic write via temp file + rename, `0700` directory / `0600` file permissions), replacing the SQLite database at `~/.trustdep/cache.db`. TTL behaviour, the `Cache` API and `--no-cache` are unchanged. A leftover `~/.trustdep/cache.db` from an earlier version is no longer read and can be deleted.
+
+### Removed
+- **`better-sqlite3` and `@types/better-sqlite3`.** The runtime dependency tree drops from 40 packages to 3 (`chalk`, `commander`, `semver`): no native code, no install scripts, and no prebuilt binary download at install time. This also clears the Socket.dev alerts inherited from that subtree (obfuscated code, optimized-override on `safe-buffer`, network/shell access, native code, deprecated transitive packages).
+
+### Fixed
+- **Version ranges are resolved with semver instead of being treated as exact versions.** `NpmClient.resolveVersion` previously looked for the range string as a literal version key and, on a miss, fell back to the *last key* of the packument `versions` object — that is publish order, so the fallback landed on the newest published build including nightlies and canaries. Consequences: `typescript: "^5.4.0"` was analysed as `7.1.0-dev.*` (version `5.4.0` was never published), and `next: "^13.4"` as a `16.x-canary` build carrying 0 advisories instead of `13.5.x` carrying 34 — a false negative across every analyser. Resolution order is now exact version → dist-tag → `semver.maxSatisfying` over the published versions → `dist-tags.latest` → highest stable version. Prereleases are never selected for a stable range.
+- **`scan` no longer truncates ranges.** The declared range is passed through intact; `^`, `~`, `x`-ranges and compound ranges (`>=1.6.0 <2`) are all resolved correctly.
+- **Dev toolchain advisories.** `vitest` `^2.1.9` → `^4.1.11` (GHSA-5xrq-8626-4rwp, CVSS 10.0; GHSA-82fw-gwwq-j7x9) and `esbuild` pinned to `^0.28.1` through `overrides` (GHSA-g7r4-m6w7-qqqr). `npm audit` reports no vulnerabilities.
+
+### Added
+- Test coverage for the two rewritten areas: 13 cache tests (round-trip, expiry, cleanup, corrupt entries, atomic overwrite) and 21 version-resolution tests (exact, dist-tag, caret/tilde/x/compound ranges, unpublished range base, prerelease exclusion, fallbacks).
+
 ## [1.2.2] - 2026-05-26
 
 ### Fixed
@@ -85,6 +102,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Trusted-scope allowlist (`@nestjs`, `@babel`, `@types`, `@angular`, `@aws-sdk`, …) exempts known-good organisations from typosquat heuristics.
 - Distance-based typosquat matching is skipped for very short package names (< 5 characters) to avoid noise.
 
-[Unreleased]: https://github.com/ali-bingul/trustdep/compare/v1.0.1...HEAD
+[Unreleased]: https://github.com/ali-bingul/trustdep/compare/v2.0.0...HEAD
+[2.0.0]: https://github.com/ali-bingul/trustdep/compare/v1.2.2...v2.0.0
 [1.0.1]: https://github.com/ali-bingul/trustdep/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/ali-bingul/trustdep/releases/tag/v1.0.0

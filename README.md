@@ -133,7 +133,7 @@ All requests:
 - have a hard timeout (15–30 s) and a single retry;
 - send no authentication, no tokens, no user identifiers, and no telemetry.
 
-Responses are cached locally in `~/.trustdep/cache.db` (SQLite). Use
+Responses are cached locally as JSON files under `~/.trustdep/cache/`. Use
 `--no-cache` to bypass the cache for a fresh fetch.
 
 ## Contributing

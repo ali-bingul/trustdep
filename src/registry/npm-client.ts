@@ -1,4 +1,5 @@
 // filepath: src/registry/npm-client.ts
+import semver from "semver";
 import { httpJson, HttpError } from "./http.js";
 import type { Cache } from "../cache/cache.js";
 import { PackageNotFoundError, type Packument, type PackumentVersion } from "../types.js";
@@ -6,6 +7,15 @@ import { USER_AGENT } from "../version.js";
 
 const REGISTRY = "https://registry.npmjs.org";
 const TIMEOUT_MS = 30_000;
+
+function highestVersion(versions: string[], name: string): string {
+  const valid = versions.filter(v => semver.valid(v));
+  const stable = valid.filter(v => semver.prerelease(v) === null);
+  const pool = stable.length > 0 ? stable : valid;
+  const highest = [...pool].sort(semver.rcompare)[0];
+  if (!highest) throw new Error(`No versions available for ${name}`);
+  return highest;
+}
 
 export interface NpmClientOptions {
   cache?: Cache | undefined;
@@ -70,19 +80,26 @@ export class NpmClient {
   }
 
   resolveVersion(packument: Packument, requested?: string): string {
+    const versions = Object.keys(packument.versions ?? {});
+    const latest = packument["dist-tags"]?.latest;
+
     if (!requested || requested === "latest") {
-      const latest = packument["dist-tags"]?.latest;
       if (latest) return latest;
+      return highestVersion(versions, packument.name);
     }
-    if (requested && packument.versions[requested]) return requested;
-    if (requested && packument["dist-tags"]?.[requested]) {
-      return packument["dist-tags"][requested]!;
+
+    if (packument.versions?.[requested]) return requested;
+
+    const tagged = packument["dist-tags"]?.[requested];
+    if (tagged) return tagged;
+
+    if (semver.validRange(requested)) {
+      const match = semver.maxSatisfying(versions, requested);
+      if (match) return match;
     }
-    // Fallback: pick last version key
-    const versions = Object.keys(packument.versions);
-    const last = versions[versions.length - 1];
-    if (!last) throw new Error(`No versions available for ${packument.name}`);
-    return last;
+
+    if (latest) return latest;
+    return highestVersion(versions, packument.name);
   }
 
   async fetchDownloads(

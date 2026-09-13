@@ -95,7 +95,7 @@ export async function scan(opts: ScanCmdOptions): Promise<void> {
 
   const targets = Object.entries(deps)
     .filter(([name]) => !shouldIgnore(name, ignore))
-    .map(([name, range]) => ({ name, version: cleanRange(range) }));
+    .map(([name, range]) => ({ name, version: toVersionRange(range) }));
 
   if (targets.length === 0) {
     process.stdout.write("No dependencies to scan.\n");
@@ -135,14 +135,13 @@ export async function scan(opts: ScanCmdOptions): Promise<void> {
   process.exit(exitCode);
 }
 
-function cleanRange(range: string): string | undefined {
+export function toVersionRange(range: string): string | undefined {
   if (!range) return undefined;
-  // strip leading ^ ~ >= etc — npm-client.resolveVersion will pick latest if not exact
-  const cleaned = range.replace(/^[~^=<>]+/, "").trim();
+  const spec = range.trim();
   // git/url/file specs — leave as undefined to fetch latest packument
-  if (/^(git|http|file|link|workspace)/i.test(cleaned)) return undefined;
-  if (cleaned === "*" || cleaned === "" || cleaned === "latest") return undefined;
-  return cleaned;
+  if (/^(git|http|file|link|workspace)/i.test(spec)) return undefined;
+  if (spec === "*" || spec === "" || spec === "latest") return undefined;
+  return spec;
 }
 
 function worstLevel(results: PackageResult[]): RiskLevel | null {
