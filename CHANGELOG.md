@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.1.0] - 2026-09-13
+
 ### Added
 - **Notice when a pinned version is not published.** `check foo@1.2.3` and a pinned `package.json` entry now report `version 1.2.3 is not published; analysed <resolved> instead` instead of silently analysing the fallback version. Surfaced in the terminal report and as a `notice` field in JSON output. Version *ranges* are unaffected — they are meant to float.
 
@@ -108,7 +110,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Trusted-scope allowlist (`@nestjs`, `@babel`, `@types`, `@angular`, `@aws-sdk`, …) exempts known-good organisations from typosquat heuristics.
 - Distance-based typosquat matching is skipped for very short package names (< 5 characters) to avoid noise.
 
-[Unreleased]: https://github.com/ali-bingul/trustdep/compare/v2.0.0...HEAD
+[Unreleased]: https://github.com/ali-bingul/trustdep/compare/v2.1.0...HEAD
+[2.1.0]: https://github.com/ali-bingul/trustdep/compare/v2.0.0...v2.1.0
 [2.0.0]: https://github.com/ali-bingul/trustdep/compare/v1.2.2...v2.0.0
 [1.0.1]: https://github.com/ali-bingul/trustdep/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/ali-bingul/trustdep/releases/tag/v1.0.0
