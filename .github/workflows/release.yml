@@ -79,7 +79,7 @@ jobs:
         if: steps.tag_exists.outputs.exists == 'false' && steps.changed.outputs.changed == 'true'
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
 
       - name: Install + build + test
         if: steps.tag_exists.outputs.exists == 'false' && steps.changed.outputs.changed == 'true'

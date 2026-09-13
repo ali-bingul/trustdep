@@ -24,7 +24,7 @@ trustdep check axios
 ```
 src/
   analysers/      # detection algorithms (typosquat, supply-chain, scripts, OSV)
-  cache/          # SQLite-backed registry response cache
+  cache/          # file-backed registry response cache
   commands/       # check / scan / watch CLI commands
   core/           # orchestration — runs all analysers on a package
   lock/           # package-lock / yarn.lock / pnpm-lock parsers
