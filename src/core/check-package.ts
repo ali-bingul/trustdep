@@ -1,4 +1,5 @@
 // filepath: src/core/check-package.ts
+import semver from "semver";
 import { Cache } from "../cache/cache.js";
 import { NpmClient } from "../registry/npm-client.js";
 import { analyseTyposquat, verifyTyposquatSignals } from "../analysers/typosquat.js";
@@ -17,6 +18,16 @@ export interface CheckOptions {
   cache?: Cache | undefined;
   useCache?: boolean | undefined;
   client?: NpmClient | undefined;
+}
+
+export function versionNotice(
+  requested: string | undefined,
+  resolved: string,
+  available: string[]
+): string | undefined {
+  if (!requested || !semver.valid(requested)) return undefined;
+  if (available.includes(requested)) return undefined;
+  return `version ${requested} is not published; analysed ${resolved} instead`;
 }
 
 export async function checkPackage(
@@ -59,11 +70,13 @@ export async function checkPackage(
   let resolvedVersion = version ?? "unknown";
   let fromCache = false;
   let error: string | undefined;
+  let notice: string | undefined;
 
   try {
     const { packument, fromCache: pkgFromCache } = await client.fetchPackument(name);
     fromCache = pkgFromCache;
     resolvedVersion = client.resolveVersion(packument, version);
+    notice = versionNotice(version, resolvedVersion, Object.keys(packument.versions ?? {}));
     const current = packument.versions[resolvedVersion];
     if (!current) {
       throw new Error(`Version ${resolvedVersion} not in packument`);
@@ -105,6 +118,7 @@ export async function checkPackage(
     checkedAt,
     fromCache,
     ...(error ? { error } : {}),
+    ...(notice ? { notice } : {}),
   };
 }
 

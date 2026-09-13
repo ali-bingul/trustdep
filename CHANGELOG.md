@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- **Notice when a pinned version is not published.** `check foo@1.2.3` and a pinned `package.json` entry now report `version 1.2.3 is not published; analysed <resolved> instead` instead of silently analysing the fallback version. Surfaced in the terminal report and as a `notice` field in JSON output. Version *ranges* are unaffected — they are meant to float.
+
+### Removed
+- **`.npmignore`.** `package.json` declares a `files` allowlist, which npm honours in preference to `.npmignore`, so the file had no effect on the published tarball (verified: the same six files ship before and after).
+
 ## [2.0.0] - 2026-09-13
 
 ### Changed

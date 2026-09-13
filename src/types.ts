@@ -42,6 +42,7 @@ export interface PackageResult {
   checkedAt: number;
   fromCache: boolean;
   error?: string;
+  notice?: string;
 }
 
 export interface ScanResult {

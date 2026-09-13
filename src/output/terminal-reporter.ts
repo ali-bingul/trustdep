@@ -218,6 +218,9 @@ export function reportSingle(result: PackageResult, opts: TerminalReportOptions 
   const lines: string[] = [];
   lines.push(chalk.bold(`trustdep v${opts.version ?? VERSION} — npm supply chain scanner`));
   lines.push(`  ${chalk.gray("package:")} ${chalk.bold(`${result.name}@${result.version}`)}`);
+  if (result.notice) {
+    lines.push(`  ${chalk.yellow(`! ${result.notice}`)}`);
+  }
   lines.push("");
   if (result.signals.length > 0) {
     lines.push(formatSignalTree(result.signals));
@@ -243,16 +246,17 @@ export function reportScan(scan: ScanResult, opts: TerminalReportOptions = {}): 
   lines.push("");
 
   for (const pkg of scan.packages) {
-    if (!opts.verbose && pkg.riskLevel === "clean") {
-      lines.push(formatPackageLine(pkg));
-      continue;
-    }
     lines.push(formatPackageLine(pkg));
-    if (pkg.signals.length > 0) {
-      lines.push(formatSignalTree(pkg.signals));
+    if (opts.verbose || pkg.riskLevel !== "clean") {
+      if (pkg.signals.length > 0) {
+        lines.push(formatSignalTree(pkg.signals));
+      }
+      if (pkg.error) {
+        lines.push(chalk.red(`    ! error: ${pkg.error}`));
+      }
     }
-    if (pkg.error) {
-      lines.push(chalk.red(`    ! error: ${pkg.error}`));
+    if (pkg.notice) {
+      lines.push(chalk.yellow(`    ! ${pkg.notice}`));
     }
   }
 

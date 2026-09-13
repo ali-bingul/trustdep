@@ -14,6 +14,7 @@ export interface JsonReport {
     fromCache: boolean;
     signals: Signal[];
     error?: string;
+    notice?: string;
   }>;
 }
 
@@ -30,6 +31,7 @@ export function toJsonReport(scan: ScanResult, version = VERSION): JsonReport {
       fromCache: p.fromCache,
       signals: p.signals,
       ...(p.error ? { error: p.error } : {}),
+      ...(p.notice ? { notice: p.notice } : {}),
     })),
   };
 }
@@ -46,6 +48,7 @@ export function toJsonSingle(result: PackageResult, version = VERSION): unknown 
       fromCache: result.fromCache,
       signals: result.signals,
       ...(result.error ? { error: result.error } : {}),
+      ...(result.notice ? { notice: result.notice } : {}),
     },
   };
 }
